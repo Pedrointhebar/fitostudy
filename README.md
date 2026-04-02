@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FitoStudy — Fitopatologia para Agronomia
 
-## Getting Started
+Plataforma de estudo de fitopatologia com 11 módulos completos, glossário interativo e questionário com feedback explicativo.
 
-First, run the development server:
+## Stack
+
+- Next.js 14 (App Router)
+- TypeScript
+- Tailwind CSS v4
+- Framer Motion
+- next-themes (dark mode)
+- Vercel Analytics
+
+## Desenvolvimento
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abra [http://localhost:3000](http://localhost:3000) no navegador.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Deploy no Vercel
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npx vercel --prod
+```
 
-## Learn More
+Ou importe o repositório diretamente em [vercel.com](https://vercel.com).
 
-To learn more about Next.js, take a look at the following resources:
+## Estrutura
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+app/
+  layout.tsx           # Layout raiz com fontes e dark mode
+  page.tsx             # Página inicial com grid de módulos
+  [slug]/page.tsx      # Página dinâmica de cada módulo
+  glossario/page.tsx   # Glossário com busca em tempo real
+  questionario/page.tsx # Quiz interativo com 8 questões
+  bibliografia/page.tsx # Referências bibliográficas
+components/
+  Navbar.tsx           # Navegação com toggle de tema
+  TopicCard.tsx        # Card de módulo para a grade
+  ContentLayout.tsx    # Layout de conteúdo dos módulos
+  QuizEngine.tsx       # Motor do questionário
+  GlossarySearch.tsx   # Busca client-side no glossário
+  InfoBox.tsx          # Caixas de destaque (note/warning/important/tip)
+  ThemeProvider.tsx    # Provedor de tema (next-themes)
+data/
+  topics.ts            # Conteúdo completo dos 11 módulos
+  glossary.ts          # 36+ termos com definições
+  quiz.ts              # 8 questões com explicações
+  refs.ts              # Referências bibliográficas
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Notas
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Site 100% estático: sem banco de dados, sem autenticação, sem API routes
+- Todo conteúdo em arquivos TypeScript em `/data`
+- Deploy automático no Vercel a cada push na branch principal

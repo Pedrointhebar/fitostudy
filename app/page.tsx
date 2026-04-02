@@ -1,65 +1,89 @@
-import Image from "next/image";
+import { topics } from "@/data/topics";
+import TopicCard from "@/components/TopicCard";
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
+    <div className="max-w-6xl mx-auto px-4 py-12">
+      {/* Hero */}
+      <div className="text-center mb-14">
+        <span className="text-5xl block mb-4">🌿</span>
+        <h1
+          className="text-4xl md:text-5xl font-bold mb-4"
+          style={{ fontFamily: "var(--font-display)", color: "var(--color-fito-green)" }}
+        >
+          FitoStudy
+        </h1>
+        <p className="text-lg max-w-xl mx-auto" style={{ color: "var(--muted)" }}>
+          Plataforma de estudo de fitopatologia para estudantes de agronomia.
+          Explore os 11 módulos, consulte o glossário e teste seus conhecimentos.
+        </p>
+
+        {/* Quick links */}
+        <div className="flex flex-wrap justify-center gap-3 mt-6">
           <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/glossario"
+            className="px-5 py-2.5 rounded-xl text-sm font-semibold text-white transition-opacity hover:opacity-90"
+            style={{ backgroundColor: "var(--color-fito-teal)" }}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
+            📖 Glossário
           </a>
           <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/questionario"
+            className="px-5 py-2.5 rounded-xl text-sm font-semibold text-white transition-opacity hover:opacity-90"
+            style={{ backgroundColor: "var(--color-fito-amber)" }}
           >
-            Documentation
+            ✏️ Questionário
+          </a>
+          <a
+            href="/bibliografia"
+            className="px-5 py-2.5 rounded-xl text-sm font-semibold transition-opacity hover:opacity-90"
+            style={{
+              backgroundColor: "var(--surface)",
+              color: "var(--fg)",
+              border: "1px solid var(--border)",
+            }}
+          >
+            📚 Bibliografia
           </a>
         </div>
-      </main>
+      </div>
+
+      {/* Stats bar */}
+      <div
+        className="grid grid-cols-3 gap-4 rounded-2xl p-6 mb-12"
+        style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)" }}
+      >
+        {[
+          { value: "11", label: "Módulos" },
+          { value: "36+", label: "Termos no glossário" },
+          { value: "8", label: "Questões no quiz" },
+        ].map(({ value, label }) => (
+          <div key={label} className="text-center">
+            <p
+              className="text-3xl font-bold"
+              style={{ fontFamily: "var(--font-display)", color: "var(--color-fito-green)" }}
+            >
+              {value}
+            </p>
+            <p className="text-sm" style={{ color: "var(--muted)" }}>
+              {label}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      {/* Topic grid */}
+      <h2
+        className="text-2xl font-bold mb-6"
+        style={{ fontFamily: "var(--font-display)", color: "var(--fg)" }}
+      >
+        Módulos de Conteúdo
+      </h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        {topics.map((topic, index) => (
+          <TopicCard key={topic.slug} topic={topic} index={index} />
+        ))}
+      </div>
     </div>
   );
 }
