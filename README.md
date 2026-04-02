@@ -58,3 +58,4 @@ data/
 - Site 100% estático: sem banco de dados, sem autenticação, sem API routes
 - Todo conteúdo em arquivos TypeScript em `/data`
 - Deploy automático no Vercel a cada push na branch principal
+# fitostudy
