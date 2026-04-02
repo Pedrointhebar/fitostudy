@@ -3,37 +3,48 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import type { Topic } from "@/data/topics";
+import type { ModuleProgress } from "@/lib/progress";
+import { getProgressBadge } from "@/lib/progress";
 
 interface TopicCardProps {
   topic: Topic;
   index: number;
+  progress?: ModuleProgress | null;
 }
 
-export default function TopicCard({ topic, index }: TopicCardProps) {
+export default function TopicCard({ topic, index, progress }: TopicCardProps) {
+  const badge = getProgressBadge(progress ?? null);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35, delay: index * 0.05 }}
+      transition={{ duration: 0.35, delay: index * 0.04 }}
+      className="h-full"
     >
       <Link href={`/${topic.slug}`} className="block group h-full">
         <div
-          className="h-full rounded-2xl p-5 transition-all duration-200 group-hover:-translate-y-1 group-hover:shadow-lg"
+          className="h-full rounded-2xl p-5 flex flex-col transition-all duration-200 group-hover:-translate-y-1 group-hover:shadow-lg"
           style={{
             border: "1px solid var(--border)",
             backgroundColor: "var(--surface)",
           }}
         >
-          {/* Badge */}
-          <span
-            className="inline-block text-xs font-semibold px-2 py-0.5 rounded-full mb-3"
-            style={{
-              backgroundColor: topic.badgeColor,
-              color: topic.color,
-            }}
-          >
-            {topic.badge}
-          </span>
+          {/* Top row: module badge + quiz score */}
+          <div className="flex items-center justify-between mb-3">
+            <span
+              className="text-xs font-semibold px-2 py-0.5 rounded-full"
+              style={{ backgroundColor: topic.badgeColor, color: topic.color }}
+            >
+              {topic.badge}
+            </span>
+            <span
+              className="text-xs font-semibold px-2 py-0.5 rounded-full"
+              style={{ backgroundColor: badge.bg, color: badge.color }}
+            >
+              {badge.label}
+            </span>
+          </div>
 
           {/* Icon + Title */}
           <div className="flex items-start gap-3 mb-2">
@@ -47,20 +58,17 @@ export default function TopicCard({ topic, index }: TopicCardProps) {
           </div>
 
           {/* Description */}
-          <p className="text-sm leading-relaxed mb-4" style={{ color: "var(--muted)" }}>
+          <p className="text-sm leading-relaxed mb-4 flex-1" style={{ color: "var(--muted)" }}>
             {topic.description}
           </p>
 
-          {/* Key terms preview */}
-          <div className="flex flex-wrap gap-1 mt-auto">
+          {/* Key terms */}
+          <div className="flex flex-wrap gap-1 mb-4">
             {topic.keyTerms.slice(0, 3).map((term) => (
               <span
                 key={term}
                 className="text-xs px-2 py-0.5 rounded-full"
-                style={{
-                  backgroundColor: topic.badgeColor,
-                  color: topic.color,
-                }}
+                style={{ backgroundColor: topic.badgeColor, color: topic.color }}
               >
                 {term}
               </span>
@@ -72,12 +80,26 @@ export default function TopicCard({ topic, index }: TopicCardProps) {
             )}
           </div>
 
-          {/* Arrow */}
-          <div
-            className="mt-4 text-sm font-medium flex items-center gap-1 transition-transform group-hover:translate-x-1"
-            style={{ color: topic.color }}
-          >
-            Estudar módulo →
+          {/* Actions */}
+          <div className="flex items-center justify-between mt-auto">
+            <span
+              className="text-sm font-medium transition-transform group-hover:translate-x-1 inline-block"
+              style={{ color: topic.color }}
+            >
+              Estudar →
+            </span>
+            <Link
+              href={`/${topic.slug}/quiz`}
+              onClick={(e) => e.stopPropagation()}
+              className="text-xs px-3 py-1.5 rounded-lg font-medium transition-colors"
+              style={{
+                backgroundColor: topic.badgeColor,
+                color: topic.color,
+                border: `1px solid ${topic.color}30`,
+              }}
+            >
+              ✏️ Quiz
+            </Link>
           </div>
         </div>
       </Link>

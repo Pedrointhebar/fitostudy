@@ -35,6 +35,36 @@ export default async function TopicPage({ params }: Props) {
     <div>
       <ContentLayout topic={topic} />
 
+      {/* Quiz CTA */}
+      <div className="max-w-4xl mx-auto px-4 mb-6">
+        <div
+          className="rounded-2xl p-6 flex items-center justify-between gap-4 flex-wrap"
+          style={{
+            background: `linear-gradient(135deg, ${topic.badgeColor} 0%, var(--surface) 100%)`,
+            border: `2px solid ${topic.color}30`,
+          }}
+        >
+          <div>
+            <p
+              className="font-bold text-lg"
+              style={{ fontFamily: "var(--font-display)", color: topic.color }}
+            >
+              ✏️ Quiz do Módulo
+            </p>
+            <p className="text-sm" style={{ color: "var(--muted)" }}>
+              5 questões sobre {topic.title} — resultado salvo no seu progresso
+            </p>
+          </div>
+          <Link
+            href={`/${slug}/quiz`}
+            className="px-6 py-3 rounded-xl font-semibold text-white text-sm transition-opacity hover:opacity-90"
+            style={{ backgroundColor: topic.color }}
+          >
+            Iniciar quiz →
+          </Link>
+        </div>
+      </div>
+
       {/* Navigation between modules */}
       <div
         className="max-w-4xl mx-auto px-4 pb-12 flex gap-4 flex-wrap"

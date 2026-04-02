@@ -3,12 +3,17 @@
 @variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --color-fito-green: #3B6D11;
-  --color-fito-mid: #639922;
-  --color-fito-light: #EAF3DE;
-  --color-fito-amber: #BA7517;
-  --color-fito-teal: #0F6E56;
-  --color-fito-coral: #993C1D;
+  --color-green: #3B6D11;
+  --color-green-mid: #639922;
+  --color-green-light: #EAF3DE;
+  --color-amber: #BA7517;
+  --color-amber-light: #FAEEDA;
+  --color-teal: #0F6E56;
+  --color-teal-light: #E1F5EE;
+  --color-coral: #993C1D;
+  --color-coral-light: #FAECE7;
+  --color-blue: #185FA5;
+  --color-blue-light: #E6F1FB;
 
   --font-display: "Playfair Display", Georgia, serif;
   --font-body: "Source Sans 3", "Source Sans Pro", sans-serif;
@@ -20,6 +25,12 @@
   --surface: #f8faf5;
   --border: #d4e2c2;
   --muted: #6b7280;
+  --color-fito-green: #3B6D11;
+  --color-fito-mid: #639922;
+  --color-fito-light: #EAF3DE;
+  --color-fito-amber: #BA7517;
+  --color-fito-teal: #0F6E56;
+  --color-fito-coral: #993C1D;
 }
 
 .dark {
