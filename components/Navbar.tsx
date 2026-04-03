@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getAllProgress } from "@/lib/progress";
 import { topics } from "@/data/topics";
+import SearchModal from "@/components/SearchModal";
 
 const navLinks = [
   { href: "/", label: "Início" },
@@ -15,12 +16,27 @@ const navLinks = [
   { href: "/bibliografia", label: "Bibliografia" },
 ];
 
+const toolLinks = [
+  { href: "/flashcards", label: "🃏 Flashcards" },
+  { href: "/diagnostico", label: "🔍 Diagnóstico" },
+  { href: "/galeria", label: "🖼️ Galeria" },
+  { href: "/mapa", label: "🗺️ Mapa Conceitual" },
+  { href: "/comparativo", label: "⚖️ Comparativo" },
+  { href: "/frac", label: "🧪 FRAC" },
+  { href: "/culturas", label: "🌾 Culturas" },
+  { href: "/timeline", label: "📅 Timeline" },
+  { href: "/revisao", label: "⏱️ Revisão Rápida" },
+];
+
 export default function Navbar() {
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [toolsOpen, setToolsOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [completedCount, setCompletedCount] = useState(0);
+  const toolsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -28,112 +44,212 @@ export default function Navbar() {
     setCompletedCount(progress.length);
   }, [pathname]);
 
+  // Cmd+K to open search
+  useEffect(() => {
+    function handler(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        setIsSearchOpen(true);
+      }
+    }
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, []);
+
+  // Close tools dropdown on outside click
+  useEffect(() => {
+    function handler(e: MouseEvent) {
+      if (toolsRef.current && !toolsRef.current.contains(e.target as Node)) {
+        setToolsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
   return (
-    <nav
-      className="sticky top-0 z-50 backdrop-blur-md"
-      style={{
-        backgroundColor: "color-mix(in srgb, var(--bg) 90%, transparent)",
-        borderBottom: "1px solid var(--border)",
-      }}
-    >
-      <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 shrink-0">
-          <span className="text-2xl" aria-hidden>🌿</span>
-          <span
-            className="text-xl font-bold tracking-tight"
-            style={{ fontFamily: "var(--font-display)", color: "var(--color-fito-green)" }}
-          >
-            FitoStudy
-          </span>
-        </Link>
+    <>
+      <nav
+        className="sticky top-0 z-50 backdrop-blur-md"
+        style={{
+          backgroundColor: "color-mix(in srgb, var(--bg) 90%, transparent)",
+          borderBottom: "1px solid var(--border)",
+        }}
+      >
+        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-2 shrink-0">
+            <span className="text-2xl" aria-hidden>🌿</span>
+            <span
+              className="text-xl font-bold tracking-tight"
+              style={{ fontFamily: "var(--font-display)", color: "var(--color-fito-green)" }}
+            >
+              FitoStudy
+            </span>
+          </Link>
 
-        {/* Desktop nav */}
-        <div className="hidden lg:flex items-center gap-1">
-          {navLinks.map((link) => {
-            const active = pathname === link.href;
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="px-3 py-2 rounded-lg text-sm font-medium transition-colors"
+          {/* Desktop nav */}
+          <div className="hidden lg:flex items-center gap-1">
+            {navLinks.map((link) => {
+              const active = pathname === link.href;
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="px-3 py-2 rounded-lg text-sm font-medium transition-colors"
+                  style={{
+                    backgroundColor: active ? "var(--color-fito-light)" : "transparent",
+                    color: active ? "var(--color-fito-green)" : "var(--fg)",
+                  }}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
+
+            {/* Tools dropdown */}
+            <div ref={toolsRef} className="relative">
+              <button
+                onClick={() => setToolsOpen(!toolsOpen)}
+                className="px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-1"
                 style={{
-                  backgroundColor: active ? "var(--color-fito-light)" : "transparent",
-                  color: active ? "var(--color-fito-green)" : "var(--fg)",
+                  backgroundColor: toolsOpen ? "var(--color-fito-light)" : "transparent",
+                  color: toolsOpen ? "var(--color-fito-green)" : "var(--fg)",
                 }}
               >
-                {link.label}
-              </Link>
-            );
-          })}
-        </div>
+                Ferramentas ▼
+              </button>
+              {toolsOpen && (
+                <div
+                  className="absolute top-full right-0 mt-1 w-52 rounded-xl overflow-hidden shadow-xl z-50 py-1"
+                  style={{
+                    backgroundColor: "var(--bg)",
+                    border: "1px solid var(--border)",
+                  }}
+                >
+                  {toolLinks.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      onClick={() => setToolsOpen(false)}
+                      className="block px-4 py-2.5 text-sm transition-colors"
+                      style={{
+                        color: pathname === link.href ? "var(--color-fito-green)" : "var(--fg)",
+                        backgroundColor: pathname === link.href ? "var(--color-fito-light)" : "transparent",
+                      }}
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
 
-        <div className="flex items-center gap-2">
-          {/* Progress badge */}
-          {mounted && (
-            <Link
-              href="/progresso"
-              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors"
-              style={{
-                backgroundColor: completedCount > 0 ? "var(--color-fito-light)" : "var(--surface)",
-                color: completedCount > 0 ? "var(--color-fito-green)" : "var(--muted)",
-                border: "1px solid var(--border)",
-              }}
-            >
-              <span>📊</span>
-              <span>{completedCount}/{topics.length}</span>
-            </Link>
-          )}
-
-          {/* Theme toggle */}
-          {mounted && (
+          <div className="flex items-center gap-2">
+            {/* Search button */}
             <button
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="w-9 h-9 rounded-lg flex items-center justify-center text-lg"
-              style={{ border: "1px solid var(--border)" }}
-              aria-label="Alternar tema"
+              onClick={() => setIsSearchOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm transition-colors"
+              style={{
+                border: "1px solid var(--border)",
+                color: "var(--muted)",
+                backgroundColor: "var(--surface)",
+              }}
+              aria-label="Buscar (Ctrl+K)"
             >
-              {theme === "dark" ? "☀️" : "🌙"}
+              <span>🔍</span>
+              <span className="hidden sm:inline text-xs">Ctrl+K</span>
             </button>
-          )}
 
-          {/* Mobile menu */}
-          <button
-            className="lg:hidden w-9 h-9 rounded-lg flex items-center justify-center"
-            style={{ border: "1px solid var(--border)" }}
-            onClick={() => setMenuOpen(!menuOpen)}
-            aria-label="Menu"
-          >
-            <span className="text-lg">{menuOpen ? "✕" : "☰"}</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Mobile menu */}
-      {menuOpen && (
-        <div
-          className="lg:hidden px-4 pb-4 flex flex-col gap-1"
-          style={{ borderTop: "1px solid var(--border)" }}
-        >
-          {navLinks.map((link) => {
-            const active = pathname === link.href;
-            return (
+            {/* Progress badge */}
+            {mounted && (
               <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setMenuOpen(false)}
-                className="px-4 py-2 rounded-lg text-sm font-medium"
+                href="/progresso"
+                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors"
                 style={{
-                  backgroundColor: active ? "var(--color-fito-light)" : "transparent",
-                  color: active ? "var(--color-fito-green)" : "var(--fg)",
+                  backgroundColor: completedCount > 0 ? "var(--color-fito-light)" : "var(--surface)",
+                  color: completedCount > 0 ? "var(--color-fito-green)" : "var(--muted)",
+                  border: "1px solid var(--border)",
                 }}
               >
-                {link.label}
+                <span>📊</span>
+                <span>{completedCount}/{topics.length}</span>
               </Link>
-            );
-          })}
+            )}
+
+            {/* Theme toggle */}
+            {mounted && (
+              <button
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                className="w-9 h-9 rounded-lg flex items-center justify-center text-lg"
+                style={{ border: "1px solid var(--border)" }}
+                aria-label="Alternar tema"
+              >
+                {theme === "dark" ? "☀️" : "🌙"}
+              </button>
+            )}
+
+            {/* Mobile menu */}
+            <button
+              className="lg:hidden w-9 h-9 rounded-lg flex items-center justify-center"
+              style={{ border: "1px solid var(--border)" }}
+              onClick={() => setMenuOpen(!menuOpen)}
+              aria-label="Menu"
+            >
+              <span className="text-lg">{menuOpen ? "✕" : "☰"}</span>
+            </button>
+          </div>
         </div>
-      )}
-    </nav>
+
+        {/* Mobile menu */}
+        {menuOpen && (
+          <div
+            className="lg:hidden px-4 pb-4 flex flex-col gap-1"
+            style={{ borderTop: "1px solid var(--border)" }}
+          >
+            {navLinks.map((link) => {
+              const active = pathname === link.href;
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setMenuOpen(false)}
+                  className="px-4 py-2 rounded-lg text-sm font-medium"
+                  style={{
+                    backgroundColor: active ? "var(--color-fito-light)" : "transparent",
+                    color: active ? "var(--color-fito-green)" : "var(--fg)",
+                  }}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
+            <div
+              className="mt-2 pt-2"
+              style={{ borderTop: "1px solid var(--border)" }}
+            >
+              <p className="px-4 py-1 text-xs font-semibold" style={{ color: "var(--muted)" }}>
+                Ferramentas
+              </p>
+              {toolLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setMenuOpen(false)}
+                  className="px-4 py-2 rounded-lg text-sm font-medium block"
+                  style={{ color: "var(--fg)" }}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+      </nav>
+
+      {/* Search modal */}
+      {isSearchOpen && <SearchModal onClose={() => setIsSearchOpen(false)} />}
+    </>
   );
 }

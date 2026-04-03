@@ -3,10 +3,12 @@
 import { useEffect, useState } from "react";
 import { topics } from "@/data/topics";
 import { caseStudies } from "@/data/cases";
+import { flashcards } from "@/data/flashcards";
 import {
   getAllProgress,
   getAllCaseProgress,
   resetProgress,
+  getDueFlashcards,
   type ModuleProgress,
   type CaseProgress,
 } from "@/lib/progress";
@@ -18,6 +20,8 @@ export default function ProgressoPage() {
   const [progressMap, setProgressMap] = useState<Record<string, ModuleProgress>>({});
   const [caseProgress, setCaseProgress] = useState<CaseProgress[]>([]);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [dueCount, setDueCount] = useState(0);
+  const [reviewedCount, setReviewedCount] = useState(0);
 
   function load() {
     const all = getAllProgress();
@@ -25,6 +29,10 @@ export default function ProgressoPage() {
     all.forEach((p) => (map[p.slug] = p));
     setProgressMap(map);
     setCaseProgress(getAllCaseProgress());
+    const allIds = flashcards.map((c) => c.id);
+    setDueCount(getDueFlashcards(allIds).length);
+    // Count reviewed = total - due (rough approximation of cards studied)
+    setReviewedCount(allIds.length - getDueFlashcards(allIds).length);
   }
 
   useEffect(() => { load(); }, []);
@@ -131,6 +139,55 @@ export default function ProgressoPage() {
             />
           </motion.div>
         ))}
+      </div>
+
+      {/* Flashcard stats section */}
+      <h2
+        className="text-xl font-bold mb-4"
+        style={{ fontFamily: "var(--font-display)", color: "var(--fg)" }}
+      >
+        Flashcards
+      </h2>
+      <div
+        className="rounded-2xl p-5 mb-8 flex flex-wrap gap-6 items-center justify-between"
+        style={{ backgroundColor: "var(--surface)", border: "1px solid var(--border)" }}
+      >
+        <div className="flex gap-6">
+          <div className="text-center">
+            <p
+              className="text-2xl font-bold"
+              style={{ fontFamily: "var(--font-display)", color: "var(--color-fito-green)" }}
+            >
+              {flashcards.length}
+            </p>
+            <p className="text-xs" style={{ color: "var(--muted)" }}>Total de cards</p>
+          </div>
+          <div className="text-center">
+            <p
+              className="text-2xl font-bold"
+              style={{ fontFamily: "var(--font-display)", color: "#166534" }}
+            >
+              {reviewedCount}
+            </p>
+            <p className="text-xs" style={{ color: "var(--muted)" }}>Revisados</p>
+          </div>
+          <div className="text-center">
+            <p
+              className="text-2xl font-bold"
+              style={{ fontFamily: "var(--font-display)", color: "#92400e" }}
+            >
+              {dueCount}
+            </p>
+            <p className="text-xs" style={{ color: "var(--muted)" }}>Pendentes hoje</p>
+          </div>
+        </div>
+        <a
+          href="/flashcards"
+          className="px-4 py-2 rounded-xl text-sm font-semibold text-white"
+          style={{ backgroundColor: "var(--color-fito-green)" }}
+        >
+          Estudar flashcards →
+        </a>
       </div>
 
       {/* Cases section */}

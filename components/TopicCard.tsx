@@ -4,7 +4,8 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import type { Topic } from "@/data/topics";
 import type { ModuleProgress } from "@/lib/progress";
-import { getProgressBadge } from "@/lib/progress";
+import { getProgressBadge, getReadingCompleted } from "@/lib/progress";
+import { useEffect, useState } from "react";
 
 interface TopicCardProps {
   topic: Topic;
@@ -14,6 +15,10 @@ interface TopicCardProps {
 
 export default function TopicCard({ topic, index, progress }: TopicCardProps) {
   const badge = getProgressBadge(progress ?? null);
+  const [readingDone, setReadingDone] = useState(false);
+  useEffect(() => {
+    setReadingDone(getReadingCompleted(topic.slug));
+  }, [topic.slug]);
 
   return (
     <motion.div
@@ -38,12 +43,23 @@ export default function TopicCard({ topic, index, progress }: TopicCardProps) {
             >
               {topic.badge}
             </span>
-            <span
-              className="text-xs font-semibold px-2 py-0.5 rounded-full"
-              style={{ backgroundColor: badge.bg, color: badge.color }}
-            >
-              {badge.label}
-            </span>
+            <div className="flex items-center gap-1">
+              {readingDone && (
+                <span
+                  className="text-xs font-semibold px-2 py-0.5 rounded-full"
+                  style={{ backgroundColor: "#dcfce7", color: "#166534" }}
+                  title="Leitura concluída"
+                >
+                  ✓ lido
+                </span>
+              )}
+              <span
+                className="text-xs font-semibold px-2 py-0.5 rounded-full"
+                style={{ backgroundColor: badge.bg, color: badge.color }}
+              >
+                {badge.label}
+              </span>
+            </div>
           </div>
 
           {/* Icon + Title */}

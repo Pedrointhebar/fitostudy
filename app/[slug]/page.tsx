@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { topics, getTopicBySlug } from "@/data/topics";
 import ContentLayout from "@/components/ContentLayout";
+import TopicPageClient from "./TopicPageClient";
 import type { Metadata } from "next";
 import Link from "next/link";
 
@@ -33,6 +34,7 @@ export default async function TopicPage({ params }: Props) {
 
   return (
     <div>
+      <TopicPageClient slug={slug} moduleTitle={topic.title} />
       <ContentLayout topic={topic} />
 
       {/* Quiz CTA */}
